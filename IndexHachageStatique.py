@@ -31,7 +31,6 @@ def hachage_statique(t : list[Tuple], modulo : int, attribut : int, records_per_
             # Si le bloc est plein, on ferme le fichier courant et on en ouvre un nouveau
             Table[index].close()
             Bloc_count[index] += 1
-            print(Bloc_count[index])
             file_name = f"table.{index}.bloc{Bloc_count[index]}"
             Table[index] = openFile(file_name)
             Tableau_verif[index] = 0
@@ -54,14 +53,11 @@ def hachage_statique(t : list[Tuple], modulo : int, attribut : int, records_per_
                 value = element.val[k]
                 f.write(bytes(value))
 
-            print(Tableau_verif[index])
             Tableau_verif[index] +=1
-            print(Tableau_verif[index])
             f.seek(1)
             f.write(bytes(Tableau_verif[index]))
             f.seek(0, 2)
             
-            print(f"Tuple {element.val} écrit dans le fichier table.{index}.bloc{Bloc_count[index]}")
 
     # Fermeture des fichiers
     for i in range(0, modulo):
