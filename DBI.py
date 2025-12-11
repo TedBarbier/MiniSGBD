@@ -3,78 +3,67 @@ from Operateur import Operateur
 from Tuple import Tuple
 
 class DBI(Instrumentation, Operateur):
-    """
-    Double Boucle Imbriquée (Nested Loop Join)
-    """
-    
-    def __init__(self, leftOps, rightOps, leftCol, rightCol):
+
+    def __init__(self, o1, o2, c1, c2):
         super().__init__("DBI" + str(Instrumentation.number))
         Instrumentation.number += 1
-        
-        self.leftOps = leftOps
-        self.rightOps = rightOps
-        self.leftCol = leftCol
-        self.rightCol = rightCol
-        
-        self.currentLeftTuple = None
+        self.op1 = o1
+        self.op2 = o2
+        self.col1 = c1
+        self.col2 = c2
 
     def open(self):
-        self.startTime = 0
-        self.stopTime = 0
-        self.memoire = 0
-        self.tuplesProduits = 0
-        
         self.start()
-        self.leftOps.open()
-        self.rightOps.open()
-        
-        # Load first left tuple
-        self.currentLeftTuple = self.leftOps.next()
+        self.op1.open()
+        self.nouveauTour = True
+        self.t1 = None
+        self.t2 = None
         self.stop()
-
+        
     def next(self):
         self.start()
-        
-        while self.currentLeftTuple is not None:
-            # Iterate right table
-            t_right = self.rightOps.next()
-            
-            if t_right is None:
-                # End of right table -> Advance left and Reset right
-                self.currentLeftTuple = self.leftOps.next()
-                if self.currentLeftTuple is None:
-                    break # End of join
-                
-                self.rightOps.close() # Usually re-opening is enough to reset scan
-                self.rightOps.open()
-                continue
-            
-            # Check Join Condition
-            if self.currentLeftTuple.val[self.leftCol] == t_right.val[self.rightCol]:
-                # Match found -> Merge tuples
-                # Result size = size(left) + size(right)
-                
-                new_size = self.currentLeftTuple.size + t_right.size
-                t_res = Tuple(new_size)
-                
-                # Copy values
-                # Part 1: Left
-                for i in range(self.currentLeftTuple.size):
-                    t_res.val[i] = self.currentLeftTuple.val[i]
-                    
-                # Part 2: Right
-                for i in range(t_right.size):
-                    t_res.val[self.currentLeftTuple.size + i] = t_right.val[i]
-                
-                self.produit(t_res)
-                self.stop()
-                return t_res
-                
-        self.stop()
-        return None
+        if (self.nouveauTour):
+            while True:
+                self.t1 = self.op1.next()
+                if (self.t1 == None):
+                    break
+                self.op2.open()
+                self.nouveauTour = False
+                while True:
+                    self.t2 = self.op2.next()
+                    if (self.t2 == None):
+                        break
+                    if (self.t1.val[self.col1] == self.t2.val[self.col2]):
+                        ret = Tuple(len(self.t1.val) + len(self.t2.val))
+                        for i in range(len(self.t1.val)):
+                            ret.val[i] = self.t1.val[i]
+                        for i in range(len(self.t2.val)):
+                            ret.val[i + len(self.t1.val)] = self.t2.val[i]
+                        self.produit(ret)
+                        self.stop()
+                        return ret
+                self.nouveauTour = True
+            self.stop()
+            return None    
+        else:
+            while True:
+                self.t2 = self.op2.next()
+                if (self.t2 == None):
+                    break
+                if (self.t1.val[self.col1] == self.t2.val[self.col2]):
+                    ret = Tuple(len(self.t1.val) + len(self.t2.val))
+                    for i in range(len(self.t1.val)):
+                        ret.val[i] = self.t1.val[i]
+                    for i in range(len(self.t2.val)):
+                        ret.val[i + len(self.t1.val)] = self.t2.val[i]
+                    self.produit(ret)
+                    self.stop()
+                    return ret
+            self.nouveauTour = True
+            self.stop()
+            return self.next()
 
     def close(self):
-        self.start()
-        self.leftOps.close()
-        self.rightOps.close()
-        self.stop()
+        self.op1.close()
+        self.op2.close()
+        
