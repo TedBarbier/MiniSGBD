@@ -48,9 +48,9 @@ def test_disque_bloc():
     print(f"Attendu : {num_rows}")
     
     if count == num_rows:
-        print("✅ SUCCÈS : Tous les tuples ont été lus correctement !")
+        print("SUCCÈS : Tous les tuples ont été lus correctement !")
     else:
-        print("❌ ÉCHEC : Nombre de tuples incorrect.")
+        print("ÉCHEC : Nombre de tuples incorrect.")
     
 if __name__ == "__main__":
     test_disque_bloc()

@@ -10,7 +10,7 @@ class FullScanDisqueBloc(Instrumentation, Operateur):
         super().__init__("FullScanDisqueBloc" + str(Instrumentation.number))
         Instrumentation.number += 1
         self.table_name = table_name
-        self.file_name = self.table_name + "bloc1"
+        self.file_name = self.table_name + ".bloc1"
 
     def open(self):
         self.openFile()
@@ -31,6 +31,7 @@ class FullScanDisqueBloc(Instrumentation, Operateur):
             self.num_columns = self.myReader.read(1)[0]
             self.num_tuples = self.myReader.read(1)[0]
             self.next_block_id = self.myReader.read(1)[0]
+            self.tuples_read_count = 0 
 
             
         except FileNotFoundError:
@@ -39,26 +40,27 @@ class FullScanDisqueBloc(Instrumentation, Operateur):
             print(f"Erreur de lecture: {e}")
 
     def next(self):
-        if self.start_flag:
-            self.start_flag = False
+        if self.tuples_read_count >= self.num_tuples:
+            if self.next_block_id != 0:
+                # On passe au bloc suivant
+                self.myReader.close()
+                self.file_name = self.table_name + ".bloc" + str(self.next_block_id)
+                self.openFile() # Reset les compteurs
+            else:
+                # Fin totale
+                self.myReader.close()
+                return None 
+        # 2. Lecture du tuple suivant (du bloc en cours)
+        try:
             t = Tuple(self.num_columns)
             for j in range(self.num_columns):
                 b = self.myReader.read(1)
                 t.val[j] = b[0]
-                self.tuplesProduits += 1
+            
+            self.tuples_read_count += 1
+            self.tuplesProduits += 1
             return t
-        if self.next_block_id != 0:
-            self.myReader.close()
-            self.file_name = self.table_name + "bloc" + str(self.next_block_id)
-            self.openFile()
-            t = Tuple(self.num_columns)
-            for j in range(self.num_columns):
-                b = self.myReader.read(1)
-                t.val[j] = b[0]
-                self.tuplesProduits += 1
-            return t
-        else:
-            self.myReader.close()
+        except:
             return None
     def close(self):
         if self.myReader:
