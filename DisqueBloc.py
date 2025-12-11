@@ -11,7 +11,7 @@ class DisqueBloc:
 
         try:
             current_row = 0
-            block_num = 1
+            block_num = 0
             
             while current_row < num_rows:
                 # Calculer combien de tuples dans ce bloc
