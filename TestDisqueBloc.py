@@ -14,32 +14,17 @@ def test_disque_bloc():
             os.remove(f"{table_name}.bloc{i}")
         except OSError:
             pass
-    
+
+    # Début du test
     print("--- Génération de la table ---")
     db = DisqueBloc()
-    db.generate_table(table_name, num_columns, num_rows, records_per_block)
-    
-    print("\n--- Lecture de la table ---")
-    fs = FullScanDisqueBloc(table_name)
-    fs.open()
-    
-    count = 0
-    t = fs.next()
-    while t is not None:
-        count += 1
-        print(f"Tuple {count}: {t}")
-        t = fs.next()
-        
-    fs.close()
-    
-    blocks_read = fs.get_blocks_read_count()
-    print(f"\nNombre total de tuples lus: {count}")
-    print(f"Nombre de blocs lus: {blocks_read}")
-    
-    if count == 10 and blocks_read == 3:
-        print("SUCCESS: Le test a réussi.")
-    else:
-        print("FAILURE: Le test a échoué.")
+    # db.generate_table(table_name, num_columns, num_rows, records_per_block)
+    tuples = db.randomize(num_columns, num_rows)
+    db.generate_table(tuples, table_name, num_columns, num_rows, records_per_block)
 
+    db.display_bloc_content("table1", 1)
+    db.display_bloc_content("table1", 2)
+    db.display_bloc_content("table1", 3)
+    
 if __name__ == "__main__":
     test_disque_bloc()

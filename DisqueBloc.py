@@ -7,7 +7,7 @@ class DisqueBloc:
     def __init__(self):
         self.range = 100
 
-    def generate_table(self, tuples, table_name, num_columns, num_rows, records_per_block):
+    def generate_table(self, tuples : list[Tuple], table_name, num_columns, num_rows, records_per_block):
 
         try:
             current_row = 0
@@ -32,24 +32,64 @@ class DisqueBloc:
                     
                     # Écriture des tuples
                     for _ in range(tuples_in_block):
-                        t = Tuple(num_columns)
+                        t = tuples[current_row]  # Récupérer l'objet Tuple directement
                         for j in range(num_columns):
-                            val = tuples[current_row][j]
-                            t.val[j] = val
+                            val = t.val[j]  # Accéder à l'attribut val de l'objet Tuple
                             f.write(bytes([val]))
-                
+                        current_row += 1
+                        
                 print(f"Bloc {block_num} généré: {file_name} ({tuples_in_block} tuples, suivant: {next_block_id})")
                 
-                current_row += tuples_in_block
                 block_num += 1
                 
         except Exception as e:
             print(f"Erreur lors de la génération de la table: {e}")
 
-    def randomize(self, num_columns: int, num_rows: int) -> list[tuple]:
+    def randomize(self, num_columns: int, num_rows: int) -> list[Tuple]:
         tuples = []
         for _ in range(num_rows):
-            row = tuple(random.randint(0, self.range) for _ in range(num_columns))
-            tuples.append(row)
+            tuple = Tuple(num_columns)
+            for j in range(num_columns):
+                tuple.val[j] = random.randint(0, self.range)
+            tuples.append(tuple)
         return tuples
+    
+    # Fonction temporaire pour afficher le contenu d'un fichier bloc
+    def display_bloc_content(self, table_name: str, bloc_num: int):
+        """
+        Affiche le contenu d'un fichier bloc.
+        
+        Args:
+            table_name: Nom de la table
+            bloc_num: Numéro du bloc à afficher
+        """
+        file_name = f"{table_name}.bloc{bloc_num}"
+        
+        try:
+            with open(file_name, "rb") as f:
+                # Lecture de l'entête
+                num_columns = int.from_bytes(f.read(1), byteorder='big')
+                num_tuples = int.from_bytes(f.read(1), byteorder='big')
+                next_block = int.from_bytes(f.read(1), byteorder='big')
+                
+                print(f"\n{'='*60}")
+                print(f"Contenu du bloc: {file_name}")
+                print(f"{'='*60}")
+                print(f"Entête:")
+                print(f"  - Nombre de colonnes: {num_columns}")
+                print(f"  - Nombre de tuples: {num_tuples}")
+                print(f"  - Bloc suivant: {next_block}\n")
+                
+                print(f"Tuples:")
+                for i in range(num_tuples):
+                    values = []
+                    for j in range(num_columns):
+                        val = int.from_bytes(f.read(1), byteorder='big')
+                        values.append(val)
+                    print(f"  Tuple {i+1}: {values}")
+                
+        except FileNotFoundError:
+            print(f"Erreur: Le fichier {file_name} n'existe pas.")
+        except Exception as e:
+            print(f"Erreur lors de la lecture du bloc: {e}")
         
