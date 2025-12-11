@@ -6,7 +6,7 @@ class DisqueBloc:
     def __init__(self):
         self.range = 100
 
-    def generate_table(self, table_name, num_columns, num_rows, records_per_block):
+    def generate_table(self, tuples, table_name, num_columns, num_rows, records_per_block):
 
         try:
             current_row = 0
@@ -33,7 +33,7 @@ class DisqueBloc:
                     for _ in range(tuples_in_block):
                         t = Tuple(num_columns)
                         for j in range(num_columns):
-                            val = int(random.random() * self.range)
+                            val = tuples[current_row][j]
                             t.val[j] = val
                             f.write(bytes([val]))
                 
@@ -44,3 +44,6 @@ class DisqueBloc:
                 
         except Exception as e:
             print(f"Erreur lors de la génération de la table: {e}")
+
+    def randomize(self):
+        

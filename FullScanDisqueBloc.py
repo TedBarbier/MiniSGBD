@@ -9,3 +9,13 @@ class FullScanDisqueBloc(Instrumentation, Operateur):
         Instrumentation.number += 1
         self.table_name = table_name
 
+
+    def open(self):
+
+
+
+
+    def next(self):
+
+
+    def close(self):
