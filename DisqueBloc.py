@@ -1,5 +1,6 @@
 import random
 from Tuple import Tuple
+import random
 import os
 
 class DisqueBloc:
@@ -45,5 +46,10 @@ class DisqueBloc:
         except Exception as e:
             print(f"Erreur lors de la génération de la table: {e}")
 
-    def randomize(self):
+    def randomize(self, num_columns: int, num_rows: int) -> list[tuple]:
+        tuples = []
+        for _ in range(num_rows):
+            row = tuple(random.randint(0, self.range) for _ in range(num_columns))
+            tuples.append(row)
+        return tuples
         
