@@ -54,42 +54,5 @@ class DisqueBloc:
             tuples.append(tuple)
         return tuples
     
-    # Fonction temporaire pour afficher le contenu d'un fichier bloc
-    def display_bloc_content(self, table_name: str, bloc_num: int):
-        """
-        Affiche le contenu d'un fichier bloc.
-        
-        Args:
-            table_name: Nom de la table
-            bloc_num: Numéro du bloc à afficher
-        """
-        file_name = f"{table_name}.bloc{bloc_num}"
-        
-        try:
-            with open(file_name, "rb") as f:
-                # Lecture de l'entête
-                num_columns = int.from_bytes(f.read(1), byteorder='big')
-                num_tuples = int.from_bytes(f.read(1), byteorder='big')
-                next_block = int.from_bytes(f.read(1), byteorder='big')
-                
-                print(f"\n{'='*60}")
-                print(f"Contenu du bloc: {file_name}")
-                print(f"{'='*60}")
-                print(f"Entête:")
-                print(f"  - Nombre de colonnes: {num_columns}")
-                print(f"  - Nombre de tuples: {num_tuples}")
-                print(f"  - Bloc suivant: {next_block}\n")
-                
-                print(f"Tuples:")
-                for i in range(num_tuples):
-                    values = []
-                    for j in range(num_columns):
-                        val = int.from_bytes(f.read(1), byteorder='big')
-                        values.append(val)
-                    print(f"  Tuple {i+1}: {values}")
-                
-        except FileNotFoundError:
-            print(f"Erreur: Le fichier {file_name} n'existe pas.")
-        except Exception as e:
-            print(f"Erreur lors de la lecture du bloc: {e}")
+
         

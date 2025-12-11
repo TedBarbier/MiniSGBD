@@ -15,17 +15,11 @@ class FullScanDisqueBloc(Instrumentation, Operateur):
     def open(self):
         self.openFile()
         self.start_flag = True
-        self.tuples_in_block = self.num_tuples
         self.tuplesProduits = 0
         self.memoire = 0
         self.startTime = 0
         self.stopTime = 0
-        t = Tuple(self.num_columns)
-        for j in range(self.num_columns):
-            b = self.myReader.read(1)
-            t.val[j] = b[0]
-            self.tuplesProduits += 1
-        return t
+
         
     def openFile(self):
         try:
@@ -45,6 +39,14 @@ class FullScanDisqueBloc(Instrumentation, Operateur):
             print(f"Erreur de lecture: {e}")
 
     def next(self):
+        if self.start_flag:
+            self.start_flag = False
+            t = Tuple(self.num_columns)
+            for j in range(self.num_columns):
+                b = self.myReader.read(1)
+                t.val[j] = b[0]
+                self.tuplesProduits += 1
+            return t
         if self.next_block_id != 0:
             self.myReader.close()
             self.file_name = self.table_name + "bloc" + str(self.next_block_id)

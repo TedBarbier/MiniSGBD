@@ -22,9 +22,35 @@ def test_disque_bloc():
     tuples = db.randomize(num_columns, num_rows)
     db.generate_table(tuples, table_name, num_columns, num_rows, records_per_block)
 
-    db.display_bloc_content("table1", 1)
-    db.display_bloc_content("table1", 2)
-    db.display_bloc_content("table1", 3)
+    print("\n--- Test de FullScanDisqueBloc ---")
+
+    # 1. Création de l'opérateur
+    scan = FullScanDisqueBloc(table_name)
+    
+    # 2. Ouverture
+    scan.open()
+    
+    print("Lecture des tuples via FullScan :")
+    count = 0
+    while True:
+        # 3. Itération avec next()
+        t = scan.next()
+        if t is None:
+            break
+            
+        print(f"Tuple lu {count+1}: {t}")
+        count += 1
+        
+    # 4. Fermeture
+    scan.close()
+    
+    print(f"\nTotal tuples lus : {count}")
+    print(f"Attendu : {num_rows}")
+    
+    if count == num_rows:
+        print("✅ SUCCÈS : Tous les tuples ont été lus correctement !")
+    else:
+        print("❌ ÉCHEC : Nombre de tuples incorrect.")
     
 if __name__ == "__main__":
     test_disque_bloc()
