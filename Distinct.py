@@ -1,6 +1,6 @@
-from Tuple import Tuple
 from Instrumentation import Instrumentation
 from Operateur import Operateur
+from Tuple import Tuple
 
 class Distinct(Instrumentation, Operateur):
 
@@ -25,7 +25,7 @@ class Distinct(Instrumentation, Operateur):
             self.sortedTuples.append(t)
             t = self.child.next()
 
-        self.sortedTuples.sort(key=lambda t: (t.size, tuple(t.val)))
+        self.sortedTuples.sort(key=lambda t: (t.size, Tuple(t.val)))
 
         self.iterator = self.sortedTuples.iterator()
         self.lastReturned = None

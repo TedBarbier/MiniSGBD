@@ -1,6 +1,5 @@
 from Instrumentation import Instrumentation
 from Operateur import Operateur
-from Tuple import Tuple
 
 class FiltreEgalite(Instrumentation, Operateur):
     

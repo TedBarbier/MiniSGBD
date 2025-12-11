@@ -7,13 +7,7 @@ class DisqueBloc:
         self.range = 100
 
     def generate_table(self, table_name, num_columns, num_rows, records_per_block):
-        """
-        Génère une table répartie sur plusieurs fichiers (blocs).
-        Chaque bloc a un entête:
-        - nombre de colonnes (1 octet)
-        - nombre de tuples dans ce bloc (1 octet)
-        - numéro du bloc suivant (1 octet, 0 si dernier)
-        """
+
         try:
             current_row = 0
             block_num = 1

@@ -1,4 +1,3 @@
-from Tuple import Tuple
 from Instrumentation import Instrumentation
 from Operateur import Operateur
 

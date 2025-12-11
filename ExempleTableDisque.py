@@ -1,7 +1,6 @@
 from FullScannTableDisque import FullScanTableDisque
 from FiltreEgalite import FiltreEgalite
 from DBI import DBI
-from Tuple import Tuple
 import os
 
 # Note: Using relative paths for portability, assuming user replaces them as needed or runs in local dir
