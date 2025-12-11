@@ -32,7 +32,7 @@ def hachage_statique(t : list[Tuple], modulo : int, attribut : int, records_per_
             Table[index].close()
             Bloc_count[index] += 1
             print(Bloc_count[index])
-            file_name = f"table.{i}.bloc{Bloc_count[index]}"
+            file_name = f"table.{index}.bloc{Bloc_count[index]}"
             Table[index] = openFile(file_name)
             Tableau_verif[index] = 0
 
